@@ -1,222 +1,255 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node
+struct node
 {
-    int data;
-    struct Node *next;
+    int info;
+    struct node *next;
 };
 
-struct Node *last = NULL;
+struct node *first = NULL;
 
-// Insert at beginning
-void insertBeginning(int value)
+/* Function to create a new node */
+struct node *create_node(int x)
 {
-    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    struct node *temp;
 
-    newNode->data = value;
+    temp = (struct node *)malloc(sizeof(struct node));
 
-    if (last == NULL)
+    temp->info = x;
+    temp->next = NULL;
+
+    return temp;
+}
+
+/* 1. Insert at beginning */
+void insert_first(int x)
+{
+    struct node *t, *p;
+
+    t = create_node(x);
+
+    if (first == NULL)
     {
-        last = newNode;
-        newNode->next = last;
+        first = t;
+        t->next = first;
     }
     else
     {
-        newNode->next = last->next;
-        last->next = newNode;
-    }
+        p = first;
 
-    printf("Node inserted at beginning.\n");
+        while (p->next != first)
+        {
+            p = p->next;
+        }
+
+        t->next = first;
+        p->next = t;
+        first = t;
+    }
 }
 
-// Insert at end
-void insertEnd(int value)
+/* 2. Insert at end */
+void insert_last(int x)
 {
-    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    struct node *t, *p;
 
-    newNode->data = value;
+    t = create_node(x);
 
-    if (last == NULL)
+    if (first == NULL)
     {
-        last = newNode;
-        newNode->next = last;
+        first = t;
+        t->next = first;
     }
     else
     {
-        newNode->next = last->next;
-        last->next = newNode;
-        last = newNode;
-    }
+        p = first;
 
-    printf("Node inserted at end.\n");
+        while (p->next != first)
+        {
+            p = p->next;
+        }
+
+        p->next = t;
+        t->next = first;
+    }
 }
 
-// Insert after a given node
-void insertAfter(int key, int value)
+/* 3. Insert after a given node */
+void insert_after(int value, int x)
 {
-    if (last == NULL)
+    struct node *t, *p;
+
+    if (first == NULL)
     {
-        printf("List is empty.\n");
+        printf("List is empty\n");
         return;
     }
 
-    struct Node *temp = last->next;
+    p = first;
 
     do
     {
-        if (temp->data == key)
+        if (p->info == value)
         {
-            struct Node *newNode =
-                (struct Node *)malloc(sizeof(struct Node));
+            t = create_node(x);
 
-            newNode->data = value;
-            newNode->next = temp->next;
-            temp->next = newNode;
+            t->next = p->next;
+            p->next = t;
 
-            if (temp == last)
-                last = newNode;
-
-            printf("Node inserted after %d.\n", key);
             return;
         }
 
-        temp = temp->next;
+        p = p->next;
 
-    } while (temp != last->next);
+    } while (p != first);
 
-    printf("Given node not found.\n");
+    printf("Given node not found\n");
 }
 
-// Delete first node
-void deleteFirst()
+/* 4. Delete first node */
+void delete_first()
 {
-    if (last == NULL)
+    struct node *p, *temp;
+
+    if (first == NULL)
     {
-        printf("List is empty.\n");
+        printf("List is empty\n");
         return;
     }
 
-    struct Node *first = last->next;
-
-    if (first == last)
+    if (first->next == first)
     {
-        last = NULL;
+        free(first);
+        first = NULL;
     }
     else
     {
-        last->next = first->next;
-    }
+        p = first;
 
-    free(first);
-
-    printf("First node deleted.\n");
-}
-
-// Delete last node
-void deleteLast()
-{
-    if (last == NULL)
-    {
-        printf("List is empty.\n");
-        return;
-    }
-
-    struct Node *temp = last->next;
-
-    if (temp == last)
-    {
-        free(last);
-        last = NULL;
-    }
-    else
-    {
-        while (temp->next != last)
+        while (p->next != first)
         {
-            temp = temp->next;
+            p = p->next;
         }
 
-        temp->next = last->next;
-        free(last);
-        last = temp;
-    }
+        temp = first;
+        first = first->next;
+        p->next = first;
 
-    printf("Last node deleted.\n");
+        free(temp);
+    }
 }
 
-// Delete node after a given node
-void deleteAfter(int key)
+/* 5. Delete last node */
+void delete_last()
 {
-    if (last == NULL)
+    struct node *p, *temp;
+
+    if (first == NULL)
     {
-        printf("List is empty.\n");
+        printf("List is empty\n");
         return;
     }
 
-    struct Node *temp = last->next;
+    if (first->next == first)
+    {
+        free(first);
+        first = NULL;
+    }
+    else
+    {
+        p = first;
+
+        while (p->next->next != first)
+        {
+            p = p->next;
+        }
+
+        temp = p->next;
+        p->next = first;
+
+        free(temp);
+    }
+}
+
+/* 6. Delete node after a given node */
+void delete_after(int value)
+{
+    struct node *p, *temp;
+
+    if (first == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+
+    p = first;
 
     do
     {
-        if (temp->data == key)
+        if (p->info == value)
         {
-            struct Node *del = temp->next;
-
-            // Only one node
-            if (del == temp)
+            /* If only one node exists */
+            if (p->next == p)
             {
-                last = NULL;
-            }
-            else
-            {
-                temp->next = del->next;
-
-                if (del == last)
-                    last = temp;
+                printf("No node available after given node\n");
+                return;
             }
 
-            free(del);
+            temp = p->next;
 
-            printf("Node after %d deleted.\n", key);
+            /* If deleting first node */
+            if (temp == first)
+            {
+                first = first->next;
+            }
+
+            p->next = temp->next;
+
+            free(temp);
             return;
         }
 
-        temp = temp->next;
+        p = p->next;
 
-    } while (temp != last->next);
+    } while (p != first);
 
-    printf("Given node not found.\n");
+    printf("Given node not found\n");
 }
 
-// Display list
+/* 7. Display all nodes */
 void display()
 {
-    if (last == NULL)
+    struct node *p;
+
+    if (first == NULL)
     {
-        printf("List is empty.\n");
+        printf("List is empty\n");
         return;
     }
 
-    struct Node *temp = last->next;
+    p = first;
 
     printf("Circular Linked List: ");
 
     do
     {
-        printf("%d -> ", temp->data);
-        temp = temp->next;
-    } while (temp != last->next);
+        printf("%d -> ", p->info);
+        p = p->next;
 
-    printf("(back to first node)\n");
+    } while (p != first);
+
+    printf("(back to first)\n");
 }
 
-// Main function
+/* Main function */
 int main()
 {
-    int choice, value, key;
+    int choice, x, value;
 
     do
     {
-        printf("\n--- SINGLY CIRCULAR LINKED LIST ---\n");
+        printf("\n--- Singly Circular Linked List ---\n");
         printf("1. Insert at Beginning\n");
         printf("2. Insert at End\n");
         printf("3. Insert After Given Node\n");
@@ -231,53 +264,53 @@ int main()
 
         switch (choice)
         {
-        case 1:
-            printf("Enter value: ");
-            scanf("%d", &value);
-            insertBeginning(value);
-            break;
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &x);
+                insert_first(x);
+                break;
 
-        case 2:
-            printf("Enter value: ");
-            scanf("%d", &value);
-            insertEnd(value);
-            break;
+            case 2:
+                printf("Enter value: ");
+                scanf("%d", &x);
+                insert_last(x);
+                break;
 
-        case 3:
-            printf("Enter node after which to insert: ");
-            scanf("%d", &key);
+            case 3:
+                printf("Enter node value after which to insert: ");
+                scanf("%d", &value);
 
-            printf("Enter value: ");
-            scanf("%d", &value);
+                printf("Enter new value: ");
+                scanf("%d", &x);
 
-            insertAfter(key, value);
-            break;
+                insert_after(value, x);
+                break;
 
-        case 4:
-            deleteFirst();
-            break;
+            case 4:
+                delete_first();
+                break;
 
-        case 5:
-            deleteLast();
-            break;
+            case 5:
+                delete_last();
+                break;
 
-        case 6:
-            printf("Enter node after which to delete: ");
-            scanf("%d", &key);
+            case 6:
+                printf("Enter node value after which to delete: ");
+                scanf("%d", &value);
 
-            deleteAfter(key);
-            break;
+                delete_after(value);
+                break;
 
-        case 7:
-            display();
-            break;
+            case 7:
+                display();
+                break;
 
-        case 8:
-            printf("Program terminated.\n");
-            break;
+            case 8:
+                printf("Program ended.\n");
+                break;
 
-        default:
-            printf("Invalid choice.\n");
+            default:
+                printf("Invalid choice\n");
         }
 
     } while (choice != 8);
