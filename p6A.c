@@ -24,7 +24,7 @@ struct node *create_node(int x)
 }
 
 
-/* 1. Insert at beginning */
+/* Insert at beginning */
 void insert_first(int x)
 {
     struct node *t;
@@ -33,10 +33,12 @@ void insert_first(int x)
 
     t->next = first;
     first = t;
+
+    printf("%d inserted at beginning.\n", x);
 }
 
 
-/* 2. Insert at end */
+/* Insert at end */
 void insert_last(int x)
 {
     struct node *t, *p;
@@ -58,10 +60,12 @@ void insert_last(int x)
 
         p->next = t;
     }
+
+    printf("%d inserted at end.\n", x);
 }
 
 
-/* 3. Insert after a given node */
+/* Insert after a given node */
 void insert_after(int value, int x)
 {
     struct node *t, *p;
@@ -77,74 +81,82 @@ void insert_after(int value, int x)
             t->next = p->next;
             p->next = t;
 
+            printf("%d inserted after %d.\n", x, value);
             return;
         }
 
         p = p->next;
     }
 
-    printf("Given node not found\n");
+    printf("Node %d not found.\n", value);
 }
 
 
-/* 4. Delete first node */
+/* Delete first node */
 void delete_first()
 {
     struct node *temp;
 
     if (first == NULL)
     {
-        printf("List is empty\n");
+        printf("List is empty.\n");
+        return;
     }
-    else
-    {
-        temp = first;
-        first = first->next;
 
-        free(temp);
-    }
+    temp = first;
+    first = first->next;
+
+    printf("%d deleted from beginning.\n", temp->info);
+
+    free(temp);
 }
 
 
-/* 5. Delete last node */
+/* Delete last node */
 void delete_last()
 {
     struct node *p, *temp;
 
     if (first == NULL)
     {
-        printf("List is empty\n");
+        printf("List is empty.\n");
+        return;
     }
-    else if (first->next == NULL)
+
+    if (first->next == NULL)
     {
+        printf("%d deleted from end.\n", first->info);
+
         free(first);
         first = NULL;
+        return;
     }
-    else
+
+    p = first;
+
+    while (p->next->next != NULL)
     {
-        p = first;
-
-        while (p->next->next != NULL)
-        {
-            p = p->next;
-        }
-
-        temp = p->next;
-        p->next = NULL;
-
-        free(temp);
+        p = p->next;
     }
+
+    temp = p->next;
+
+    printf("%d deleted from end.\n", temp->info);
+
+    p->next = NULL;
+
+    free(temp);
 }
 
 
-/* 6. Delete node after a given node */
+/* Delete node after a given node */
 void delete_after(int value)
 {
     struct node *p, *temp;
 
     if (first == NULL)
     {
-        printf("List is empty\n");
+        printf("List is empty.\n");
         return;
     }
 
@@ -156,12 +168,15 @@ void delete_after(int value)
         {
             if (p->next == NULL)
             {
-                printf("No node exists after given node\n");
+                printf("No node exists after %d.\n", value);
                 return;
             }
 
             temp = p->next;
+
             p->next = temp->next;
+
+            printf("%d deleted after %d.\n", temp->info, value);
 
             free(temp);
 
@@ -171,18 +186,18 @@ void delete_after(int value)
         p = p->next;
     }
 
-    printf("Given node not found\n");
+    printf("Node %d not found.\n", value);
 }
 
 
-/* 7. Display all nodes */
+/* Display linked list */
 void display()
 {
     struct node *p;
 
     if (first == NULL)
     {
-        printf("List is empty\n");
+        printf("Linked List: EMPTY\n");
         return;
     }
 
@@ -203,11 +218,15 @@ void display()
 /* Main function */
 int main()
 {
-    int choice, x, value;
+    int choice;
+    int x, value;
 
     do
     {
-        printf("\n--- Singly Linked List ---\n");
+        printf("\n====================================\n");
+        printf("       SINGLY LINKED LIST\n");
+        printf("====================================\n");
+
         printf("1. Insert at Beginning\n");
         printf("2. Insert at End\n");
         printf("3. Insert After Given Node\n");
@@ -217,7 +236,7 @@ int main()
         printf("7. Display\n");
         printf("8. Exit\n");
 
-        printf("Enter your choice: ");
+        printf("\nEnter your choice: ");
         scanf("%d", &choice);
 
         switch (choice)
@@ -225,50 +244,66 @@ int main()
             case 1:
                 printf("Enter value: ");
                 scanf("%d", &x);
+
                 insert_first(x);
+                display();
                 break;
+
 
             case 2:
                 printf("Enter value: ");
                 scanf("%d", &x);
+
                 insert_last(x);
+                display();
                 break;
 
+
             case 3:
-                printf("Enter node value: ");
+                printf("Enter existing node value: ");
                 scanf("%d", &value);
 
                 printf("Enter new value: ");
                 scanf("%d", &x);
 
                 insert_after(value, x);
+                display();
                 break;
+
 
             case 4:
                 delete_first();
+                display();
                 break;
+
 
             case 5:
                 delete_last();
+                display();
                 break;
+
 
             case 6:
                 printf("Enter node value: ");
                 scanf("%d", &value);
 
                 delete_after(value);
+                display();
                 break;
+
 
             case 7:
                 display();
                 break;
 
+
             case 8:
-                printf("Program ended.\n");
+                printf("\nProgram ended.\n");
                 break;
 
+
             default:
-                printf("Invalid choice\n");
+                printf("Invalid choice!\n");
         }
 
     } while (choice != 8);
